@@ -3,14 +3,6 @@ import time
 import os
 from json import JSONDecodeError
 
-
-# def api_request(system_prompt, user_prompt, args, few_shot=None):
-#     # if "gpt" in args.model:
-#     #     return gpt_api(system_prompt, user_prompt, args, few_shot)
-#     # else:
-#     #     raise ValueError(f"Unsupported model: {args.model}")
-#     return gpt_api(system_prompt, user_prompt, args)
-
 def api_request(messages, agent, args):
     """
     messages: list of {"role": "system" | "user" | "assistant", "content": str}
