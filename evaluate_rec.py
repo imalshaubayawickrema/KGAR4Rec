@@ -13,10 +13,6 @@ import multiprocessing
 import sys
 import math
 
-# current_dir = os.path.dirname(os.path.abspath(__file__))
-# parent_dir = os.path.dirname(current_dir)
-# sys.path.append(parent_dir)
-
 from dataset.dataset import Dataset
 
 from utils.regular_function import split_user_response, split_rec_ranking, split_analyst_response
