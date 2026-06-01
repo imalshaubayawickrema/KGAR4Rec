@@ -112,9 +112,8 @@ def split_user_response(response, rec_items):
     evaluations = []
     if not response or not rec_items:
         return [], 0, False
-    top5_items = rec_items[:]
 
-    for i, item in enumerate(top5_items):
+    for i, item in enumerate(rec_items):
         # Match pattern: "Feedback on {item}: ... Decision: yes/no"
         pattern = (
             rf"Feedback on\s+{re.escape(item)}:\s*(.*?)\s*"
@@ -262,7 +261,7 @@ def format_rec_kg_descriptions(cand_descriptions, recommended_product_ids, persp
     desc_by_id = {desc['artist_id']: desc for desc in cand_descriptions}
 
     lines = []
-    for i, prod_id in enumerate(recommended_product_ids):  # Top 3 only for user agent
+    for i, prod_id in enumerate(recommended_product_ids):
         if prod_id not in desc_by_id:
             continue
 
