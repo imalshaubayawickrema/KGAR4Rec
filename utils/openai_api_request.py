@@ -57,7 +57,7 @@ def gpt_api(messages, agent, args):
         # Success path
         if resp.status_code == 200 and "choices" in data:
             choice = data["choices"][0]
-            content = choice.get("message", {}).get("content")  # safe get
+            content = choice.get("message", {}).get("content") 
 
             if content is None:
                 finish_reason = choice.get("finish_reason", "")
@@ -94,7 +94,7 @@ def gpt_api(messages, agent, args):
             )
 
         elif err_type == "too_many_requests" or resp.status_code == 429:
-            wait = max(retry_delay, 60)  # always wait at least 60s for rate limits
+            wait = max(retry_delay, 60) 
             print(f"[warning] Rate limit hit, waiting {wait}s before retry...")
             time.sleep(wait)
             retry_delay = min(retry_delay * 2, 120)
