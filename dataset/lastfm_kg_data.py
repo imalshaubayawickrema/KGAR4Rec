@@ -93,7 +93,7 @@ def load_artist_bridge(data_dir):
 
 
 def _load_artist_relation_edges(data_dir, filename, valid_artist_ids=None):
-    path = os.path.join(data_dir, filename)  # matches your rel_out_dir above
+    path = os.path.join(data_dir, filename) 
     if not os.path.exists(path):
         return pd.DataFrame(columns=["artistID","objQID","objLabel","objDesc"])
     df = pd.read_csv(path)
@@ -109,10 +109,8 @@ def _load_artist_relation_edges(data_dir, filename, valid_artist_ids=None):
 def _build_obj_vocab(df):
     if df is None or df.empty:
         return {}, []
-    # 1) Stable order: sort by objQID so mapping is reproducible
     qids = sorted(df["objQID"].astype(str).unique())
     omap = {q:i for i,q in enumerate(qids)}
-    # 2) Choose a label per QID (fallback to QID)
     best = (df.dropna(subset=["objLabel"])
               .drop_duplicates(["objQID"])
               .set_index("objQID")["objLabel"]
@@ -122,7 +120,7 @@ def _build_obj_vocab(df):
 
 
 def build_vocabs(data_dir,test):
-    artist_df, amap, artist_vocab = load_artist_bridge(data_dir)  # optional
+    artist_df, amap, artist_vocab = load_artist_bridge(data_dir)
     pad_idx = len(artist_vocab)
     ua = load_user_artists(data_dir, test, pad_idx=pad_idx,to_raw_artist_ids=True)                 # userID, artistID, weight
     ut = load_user_taggedartists(data_dir)           # userID, artistID, tagID, timestamp
@@ -159,7 +157,7 @@ def build_vocabs(data_dir,test):
         artist=edict(vocab=artist_vocab, vocab_size=len(artist_vocab)),
         tag=edict(vocab=tag_vocab,     vocab_size=len(tag_vocab)),
         genre=edict(vocab=genre_vocab, vocab_size=len(genre_vocab)),
-        # raw frames (we’ll reuse to create edges)
+        # raw frames
         ua=ua, ut=ut, fr=fr, genre_e=genre_e,
     )
 
