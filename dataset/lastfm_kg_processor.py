@@ -76,7 +76,6 @@ class KGPathExtractor:
                          e.g., {('listen', 'belong_to'): 0.45, ...}
         """
 
-        # Check cache first
         cache_key = f"{user_id}"
         if cache_key in self.user_pattern_cache:
             return self.user_pattern_cache[cache_key]
@@ -132,7 +131,6 @@ class KGPathExtractor:
         while queue:
             curr_type, curr_id, curr_depth, path = queue.popleft()
             
-            # Check if we've reached the target at the desired depth
             if curr_depth == depth:
                 if curr_type == ARTIST and curr_id == target_id:
                     paths.append(path)
@@ -140,16 +138,13 @@ class KGPathExtractor:
 
             if curr_depth >= depth:
                 continue
-            
-            # Get all outgoing edges from current node
             if curr_type not in self.kg.G or curr_id not in self.kg.G[curr_type]:
                 continue
                 
             for relation, tail_ids in self.kg.G[curr_type][curr_id].items():
                 if len(tail_ids) == 0:
                     continue
-                
-                # Get the tail entity type for this relation
+
                 tail_type = get_tail_type(curr_type, relation)
                 if tail_type is None:
                     continue
@@ -333,7 +328,7 @@ class KGPathTranslator:
         if len(paths_3hop) == 0:
             return "", {}
         
-        # Extract discriminative entities if we have liked/disliked distinction
+        # Extract discriminative entities from liked/disliked items
         if user_history_liked and len(user_history_liked) > 0:
             positive_disc, negative_disc = self._extract_discriminative_sets(
                 user_history_liked, 
@@ -449,7 +444,7 @@ class KGPathTranslator:
     def _extract_descriptive_entities(self, entity_type, entity_id):
         """
         Extract descriptive entities connected to given entity.
-        Descriptive entities: TAG, GENRE, COUNTRY, LANGUAGE
+        Descriptive entities: TAG, GENRE
         """
         descriptive_entities = set()
         
@@ -457,7 +452,7 @@ class KGPathTranslator:
             return descriptive_entities
         
         # Define which entity types are "descriptive" for Last.fm
-        descriptive_types = {TAG, GENRE, COUNTRY, LANGUAGE}
+        descriptive_types = {TAG, GENRE}
         
         for relation, tail_ids in self.kg.G[entity_type][entity_id].items():
             tail_type = get_tail_type(entity_type, relation)
@@ -573,7 +568,7 @@ class KGPathProcessor:
             paths_2hop, paths_3hop = self.extractor.extract_paths(
                 user_id, 
                 artist_id, 
-                user_history=None,  # Don't use history for historical analysis
+                user_history=None,  # not using history for historical analysis
                 use_pattern_scoring=False
             )
             
