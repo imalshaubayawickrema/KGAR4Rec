@@ -7,12 +7,10 @@ def _read_tsv(path):
 
 def load_user_artists(data_dir, test, pad_idx: int | None = None, to_raw_artist_ids: bool = True):
 
-    # Optional: dense -> raw artist bridge
     if to_raw_artist_ids:
         bridge = pd.read_pickle(os.path.join(data_dir, "artist.df"))
         dense2raw = dict(zip(bridge["id"].astype(int), bridge["artistID"].astype(int)))
 
-    # Explode rows into pairs (user, artist)
     pairs = []
     for row in test.itertuples(index=False):
         u = int(getattr(row, "userID"))
@@ -23,7 +21,6 @@ def load_user_artists(data_dir, test, pad_idx: int | None = None, to_raw_artist_
             items = [it for it in items if it != pad_idx]
         if to_raw_artist_ids:
             items = [dense2raw[it] for it in items if it in dense2raw]
-        # de-dupe per user (keep set semantics within this row)
         for a in set(items):
             pairs.append((u, a))
 
@@ -100,7 +97,7 @@ def _load_artist_relation_edges(data_dir, filename, valid_artist_ids=None):
     df["artistID"] = pd.to_numeric(df["artistID"], errors="coerce").astype("Int64")
     df = df.dropna(subset=["artistID","objQID"]).astype({"artistID":"int64"})
     df = df[df["objQID"].astype(str).str.startswith("Q")]
-    # >>> filter by artists present in artist_df <<<
+    # filter by artists present in artist_df
     if valid_artist_ids is not None:
         valid_artist_ids = set(int(a) for a in valid_artist_ids)
         df = df[df["artistID"].isin(valid_artist_ids)]
